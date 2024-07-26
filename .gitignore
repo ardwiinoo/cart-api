@@ -1,0 +1,4 @@
+node_modules
+merce-api.pem
+.env
+.prod.env
