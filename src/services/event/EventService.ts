@@ -1,6 +1,7 @@
 import EventEmitter from 'events'
 
 class EventService {
+    
     private eventEmitter: EventEmitter
 
     constructor() {
