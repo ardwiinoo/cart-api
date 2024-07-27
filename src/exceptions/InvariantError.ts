@@ -1,6 +1,6 @@
-import ClientError from "./ClientError";
+import { ClientError } from "./ClientError";
 
-class InvariantError extends ClientError {
+export class InvariantError extends ClientError {
 
     public name: string
 
@@ -9,5 +9,3 @@ class InvariantError extends ClientError {
         this.name = 'InvariantError'
     }
 }
-
-export default InvariantError
