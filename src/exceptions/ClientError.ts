@@ -1,4 +1,4 @@
-class ClientError extends Error {
+export class ClientError extends Error {
 
     public statusCode: number
     public name: string
@@ -9,5 +9,3 @@ class ClientError extends Error {
         this.name = 'ClientError'
     }
 }
-
-export default ClientError

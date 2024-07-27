@@ -1,6 +1,6 @@
-import ClientError from "./ClientError";
+import { ClientError } from "./ClientError";
 
-class AuthorizationError extends ClientError {
+export class AuthorizationError extends ClientError {
 
     public name: string
 
@@ -9,5 +9,3 @@ class AuthorizationError extends ClientError {
         this.name = 'AuthorizationError'
     }
 }
-
-export default AuthorizationError
