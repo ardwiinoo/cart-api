@@ -1,12 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuthenticationsService, UsersService } from '@/services/postgres'
-import { authentications } from './authentications'
+import { authentications, AuthenticationsOptions } from './authentications'
 import { TokenManager } from '@/tokenize/TokenManager'
-import { AuthenticationsValidator } from '@/validator'
+import { AuthenticationsValidator, UsersValidator } from '@/validator'
+import { users, UsersOptions } from './users'
 
 const usersService = new UsersService()
 const authenticationsService = new AuthenticationsService()
 
-const plugins = [
+interface Plugin<TOptions> {
+    plugin: any
+    options: TOptions
+}
+
+const plugins: Array<Plugin<UsersOptions | AuthenticationsOptions>> = [
     {
         plugin: authentications,
         options: {
@@ -14,6 +21,13 @@ const plugins = [
             authenticationsService,
             tokenManager: TokenManager,
             validator: AuthenticationsValidator
+        }
+    },
+    {
+        plugin: users,
+        options: {
+            service: usersService,
+            validator: UsersValidator
         }
     }
 ]

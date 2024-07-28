@@ -4,8 +4,9 @@ import cors from 'cors'
 import logger from 'morgan'
 import { parseFlags } from './utils/parser'
 import { env } from './utils/env'
-import typeable from './utils/typeable'
 import plugins from './api'
+import typeable from './utils/typeable'
+import errorHandler from './utils/error'
 
 const flags = parseFlags(process.argv)
 dotenv.config({
@@ -30,6 +31,8 @@ plugins.forEach(({ plugin, options }) => {
     plugin.register(app, options)
 })
 
+app.use(errorHandler)
+
 app.listen(env.get('PORT').toNumber(3000), () => {
-    console.log(`Server running at http://${env.get('HOST').toString()}:${env.get('PORT').toString()}`);
+    console.log(`Server running at http://${env.get('HOST').toString()}:${env.get('PORT').toString()}`)
 })
