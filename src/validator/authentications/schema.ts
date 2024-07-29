@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const PostAuthPayloadSchema = z.object({
-    username: z.string().min(1),
+    email: z.string().min(1).email(),
     password: z.string().min(1)
 })
 
