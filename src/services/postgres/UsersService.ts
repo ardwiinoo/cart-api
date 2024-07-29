@@ -1,5 +1,6 @@
-import { InvariantError } from '@/exceptions'
-import { hashPassword } from '@/utils/hash'
+import { AuthenticationError, InvariantError } from '@/exceptions'
+import { comparePassword, hashPassword } from '@/utils/hash'
+import { PostAuthPayload } from '@/validator/authentications/schema'
 import { PostUserPayload } from '@/validator/users/schema'
 import { nanoid } from 'nanoid'
 import { Pool } from 'pg'
@@ -27,10 +28,32 @@ export class UsersService {
         const { rows, rowCount } = await this.pool.query(query)
 
         if (!rowCount) {
-            throw new InvariantError('Gagal menambahkan user')
+            throw new InvariantError('Failed to add user')
         }
 
         return rows[0].id
+    }
+
+    async verifyUserCredentials(payload: PostAuthPayload) {
+        const query = {
+            text: 'SELECT id, password FROM users WHERE email = $1',
+            values: [payload.email]
+        }
+
+        const { rows, rowCount } = await this.pool.query(query)
+
+        if (!rowCount) {
+            throw new AuthenticationError('Authentication failed, invalid credentials')
+        }
+
+        const user = rows[0]
+        const match = comparePassword(payload.password, user.password)
+
+        if (!match) {
+            throw new AuthenticationError('Authentication failed, invalid credentials')
+        }
+
+        return user.id
     }
 
     private async verifyEmail(email: string) {
@@ -42,7 +65,7 @@ export class UsersService {
         const { rowCount } = await this.pool.query(query)
 
         if (rowCount != null && rowCount > 0) {
-            throw new InvariantError('Gagal menambahkan user. Email sudah digunakan')
+            throw new InvariantError('Failed to add user. Email is already in use')
         }
     }
 }
