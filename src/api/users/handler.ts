@@ -1,4 +1,5 @@
 import { UsersService } from "@/services/postgres";
+import { ProducerService } from "@/services/rabbitmq/ProducerService";
 import { UsersValidator } from "@/validator";
 import autoBind from "auto-bind";
 import { NextFunction, Request, Response } from "express";
@@ -6,7 +7,8 @@ import { NextFunction, Request, Response } from "express";
 class UsersHandler {
 
     constructor(
-        private service: UsersService,
+        private usersService: UsersService,
+        private producerService: typeof ProducerService,
         private validator: typeof UsersValidator
     ) {
         autoBind(this)
@@ -15,7 +17,7 @@ class UsersHandler {
     async postUserHandler(req: Request, res: Response, next: NextFunction) {
         try {
             this.validator.validatePostUserPayload(req.body)
-            const userId = await this.service.addUser(req.body)
+            const userId = await this.usersService.addUser(req.body)
 
             res.status(201).json({
                 status: 'success',
