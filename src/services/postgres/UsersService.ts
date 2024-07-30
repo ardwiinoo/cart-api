@@ -1,5 +1,6 @@
 import { AuthenticationError, InvariantError } from '@/exceptions'
 import { comparePassword, hashPassword } from '@/utils/hash'
+import { Roles } from '@/utils/types'
 import { PostAuthPayload } from '@/validator/authentications/schema'
 import { PostUserPayload } from '@/validator/users/schema'
 import { nanoid } from 'nanoid'
@@ -21,8 +22,8 @@ export class UsersService {
         const avatarUrl = `https://ui-avatars.com/api/?name=${payload.fullname}`
 
         const query = {
-            text: 'INSERT INTO users (id, email, fullname, password, phone, avatar_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-            values: [id, payload.email, payload.fullname, hashedPassword, payload.phone, avatarUrl]
+            text: 'INSERT INTO users (id, email, fullname, password, phone, avatar_url, role_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+            values: [id, payload.email, payload.fullname, hashedPassword, payload.phone, avatarUrl, Roles.CUSTOMER]
         }
 
         const { rows, rowCount } = await this.pool.query(query)

@@ -4,6 +4,7 @@ import { authentications, AuthenticationsOptions } from './authentications'
 import { TokenManager } from '@/tokenize/TokenManager'
 import { AuthenticationsValidator, UsersValidator } from '@/validator'
 import { users, UsersOptions } from './users'
+import { ProducerService } from '@/services/rabbitmq/ProducerService'
 
 const usersService = new UsersService()
 const authenticationsService = new AuthenticationsService()
@@ -26,7 +27,8 @@ const plugins: Array<Plugin<UsersOptions | AuthenticationsOptions>> = [
     {
         plugin: users,
         options: {
-            service: usersService,
+            usersService: usersService,
+            producerService: ProducerService,
             validator: UsersValidator
         }
     }
