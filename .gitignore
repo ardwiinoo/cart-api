@@ -2,3 +2,5 @@ node_modules
 merce-api.pem
 .env
 .prod.env
+merce-api-firebase-adminsdk.json
+pnpm-lock.yaml
