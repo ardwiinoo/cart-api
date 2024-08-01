@@ -5,8 +5,8 @@ import logger from 'morgan'
 import { parseFlags } from './utils/parser'
 import { env } from './utils/env'
 import plugins from './api'
-import typeable from './utils/typeable'
-import errorHandler from './utils/error'
+import typeable from './middlewares/typeable'
+import errorHandler from './middlewares/error'
 
 const flags = parseFlags(process.argv)
 dotenv.config({

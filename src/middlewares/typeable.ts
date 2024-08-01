@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { parse, Parser } from './parser'
+import { parse, Parser } from '../utils/parser'
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
