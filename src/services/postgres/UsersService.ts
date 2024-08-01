@@ -1,4 +1,4 @@
-import { AuthenticationError, InvariantError } from '@/exceptions'
+import { AuthenticationError, InvariantError, NotFoundError } from '@/exceptions'
 import { comparePassword, hashPassword } from '@/utils/hash'
 import { Roles } from '@/utils/types'
 import { PostAuthPayload } from '@/validator/authentications/schema'
@@ -68,5 +68,20 @@ export class UsersService {
         if (rowCount != null && rowCount > 0) {
             throw new InvariantError('Failed to add user. Email is already in use')
         }
+    }
+
+    async getUserById(userId: number) {
+        const query = {
+            text: 'SELECT id, email, avatar_url, phone, role_id, is_verified FROM users WHERE id = $1',
+            values: [userId]
+        }
+
+        const { rows, rowCount } = await this.pool.query(query)
+
+        if (!rowCount) {
+            throw new NotFoundError('User not found')
+        }
+
+        return rows[0] 
     }
 }
