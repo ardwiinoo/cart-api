@@ -15,5 +15,12 @@ export const TokenManager = {
         } catch (error) {
             throw new InvariantError('Refresh token tidak valid')
         }
-    }
+    },
+    verifyAccessToken: (token: string): JwtPayload => {
+        try {
+            return jwt.verify(token, env.get('ACCESS_TOKEN_KEY').toString()) as JwtPayload
+        } catch (error) {
+            throw new InvariantError('Access token tidak valid')
+        }
+    },
 }
