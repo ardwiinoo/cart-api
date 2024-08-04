@@ -4,9 +4,9 @@ import cors from 'cors'
 import logger from 'morgan'
 import { parseFlags } from './utils/parser'
 import { env } from './utils/env'
-import plugins from './api'
 import typeable from './middlewares/typeable'
 import errorHandler from './middlewares/error'
+import PluginManager from './api'
 
 const flags = parseFlags(process.argv)
 dotenv.config({
@@ -14,6 +14,7 @@ dotenv.config({
 })
 
 const app = express()
+const pluginManager = PluginManager.getInstance()
 
 app.use(
     express.json(),
@@ -27,9 +28,8 @@ app.use(
     })
 )
 
-plugins.forEach(({ plugin, options }) => {
-    plugin.register(app, options)
-})
+pluginManager.initializePlugins()
+pluginManager.getPlugins().forEach(({ plugin, options }) => plugin.register(app, options))
 
 app.use(errorHandler)
 
