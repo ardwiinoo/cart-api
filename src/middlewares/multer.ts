@@ -1,6 +1,6 @@
 import { InvariantError } from '@/exceptions'
-import { Request ,Response, NextFunction } from 'express'
-import multer, { FileFilterCallback} from 'multer'
+import { Request } from 'express'
+import multer, { FileFilterCallback } from 'multer'
 
 const storage = multer.memoryStorage() // save in buffer for steam
 
@@ -14,24 +14,14 @@ const createFileFilter = (allowedMimeTypes: string[]) => {
     }
 }
 
-const checkFilePresence = (req: Request, res: Response, next: NextFunction) => {
-    if (!req.file) {
-        return next(new InvariantError('File is required'))
-    }
-
-    next()
-}
-
 const createUpload = (allowedMimeTypes: string[], maxSize: number) => {
-    const multerMiddleware = multer({
+    return multer({
         storage: storage,
         limits: {
             fileSize: maxSize,
         },
         fileFilter: createFileFilter(allowedMimeTypes),
     }).single('file')
-
-    return [multerMiddleware, checkFilePresence]
 }
 
 export const uploadImage = createUpload(['image/jpeg', 'image/png'], 2 * 1024 * 1024) // 2MB 
