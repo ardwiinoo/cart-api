@@ -1,17 +1,24 @@
 import { AuthenticationError, InvariantError, NotFoundError } from '@/exceptions'
 import { comparePassword, hashPassword } from '@/utils/hash'
-import { Roles } from '@/utils/types'
-import { PostAuthPayload } from '@/validator/authentications/schema'
-import { PostUserPayload } from '@/validator/users/schema'
+import { PostAuthPayload, PostUserPayload, Roles } from '@/utils/types'
 import { nanoid } from 'nanoid'
 import { Pool } from 'pg'
 
 export class UsersService {
 
+    private static instance: UsersService
     private pool: Pool
 
     constructor() {
         this.pool = new Pool()
+    }
+
+    public static getInstance(): UsersService {
+        if (!UsersService.instance) {
+            UsersService.instance = new UsersService()
+        }
+        
+        return UsersService.instance
     }
 
     async addUser(payload: PostUserPayload) {
