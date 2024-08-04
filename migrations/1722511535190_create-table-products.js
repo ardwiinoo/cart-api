@@ -27,7 +27,7 @@ exports.up = (pgm) => {
             notNull: true
         },
         img_url: {
-            type: 'STRING',
+            type: 'TEXT',
             notNull: true
         },
         description: {

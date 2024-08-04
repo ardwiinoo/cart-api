@@ -8,7 +8,7 @@ const routes = (handler: ProductsHandler) => {
 
     // v1.get('/products', handler)
     // v1.get('/products/:id', handler)
-    v1.post('/products', ...uploadImage, auth, handler.postProductHandler)
+    v1.post('/products', auth, uploadImage, handler.postProductHandler)
     // v1.put('/products/:id', handler)
     // v1.delete('/products/:id', handler)
 
