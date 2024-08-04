@@ -1,4 +1,4 @@
-import { AuthorizationError } from "@/exceptions";
+import { AuthorizationError, InvariantError } from "@/exceptions";
 import { StorageService } from "@/services/firebase/StorageService";
 import { ProductsService } from "@/services/postgres";
 import { Roles, User } from "@/utils/types";
@@ -20,11 +20,18 @@ class ProductsHandler {
         try {
             this.verifyUserRole(req.user)
             this.validator.validatePostProductSchema(req.body)
+
+            if (!req.file) {
+                throw new InvariantError('File is required')
+            }
+
+            const imgUrl = await this.storage.uploadFile(req.file.buffer, '/images', req.file.originalname, req.file.mimetype)
+            const productId = await this.service.addProduct({ ...req.body, imgUrl })
             
             res.status(201).json({
                 status: 'success',
                 data: {
-                    productId: 1
+                    productId
                 }
             })
         } catch (err) {
