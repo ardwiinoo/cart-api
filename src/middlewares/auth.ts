@@ -21,7 +21,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         const token = authHeader.replace('Bearer', '')
         const { id } = tokenManager.verifyAccessToken(token)
 
-        const usersService = new UsersService()
+        const usersService = UsersService.getInstance()
         const user = await usersService.getUserById(id)
         req.user = user
 
