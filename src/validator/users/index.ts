@@ -1,5 +1,6 @@
 import { InvariantError } from "@/exceptions";
-import { PostUserPayload, PostUserPayloadSchema } from "./schema";
+import { PostUserPayloadSchema } from "./schema";
+import { PostUserPayload } from "@/utils/types";
 
 export const UsersValidator = { 
     validatePostUserPayload: (payload: PostUserPayload) => {
