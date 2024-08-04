@@ -6,5 +6,3 @@ export const PostUserPayloadSchema = z.object({
     fullname: z.string().min(1, { message: 'Fullname is required' }),
     phone: z.string().min(10, 'Phone number must be at least 10 digits long')
 })
-
-export type PostUserPayload = z.infer<typeof PostUserPayloadSchema>
