@@ -1,5 +1,6 @@
 import { InvariantError } from '@/exceptions'
-import { DeleteAuthPayload, DeleteAuthPayloadSchema, PostAuthPayload, PostAuthPayloadSchema, PutAuthPayload, PutAuthPayloadSchema } from './schema'
+import { DeleteAuthPayloadSchema, PostAuthPayloadSchema, PutAuthPayloadSchema } from './schema'
+import { DeleteAuthPayload, PostAuthPayload, PutAuthPayload } from '@/utils/types'
 
 export const AuthenticationsValidator = {
     validatePostAuthPayload: (payload: PostAuthPayload) => {
