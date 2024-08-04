@@ -1,5 +1,6 @@
 import { InvariantError } from "@/exceptions";
-import { PostProductPayload, PostProductPayloadSchema } from "./schema";
+import { PostProductPayloadSchema } from "./schema";
+import { PostProductPayload } from "@/utils/types";
 
 export const ProductsValidator = {
     validatePostProductSchema: (payload: PostProductPayload) => {
