@@ -9,42 +9,65 @@ import { StorageService } from '@/services/firebase/StorageService'
 import { products, ProductsOptions } from './products'
 import { ProductsValidator } from '@/validator/products'
 
-const authenticationsService = new AuthenticationsService()
-const productsService = new ProductsService()
-const storageService = new StorageService()
-const usersService = new UsersService()
-
 interface Plugin<TOptions> {
     plugin: any
     options: TOptions
 }
 
-const plugins: Array<Plugin<AuthenticationsOptions | ProductsOptions | UsersOptions>> = [
-    {
-        plugin: authentications,
-        options: {
-            usersService, 
-            authenticationsService,
-            tokenManager: TokenManager,
-            validator: AuthenticationsValidator
-        }
-    },
-    {
-        plugin: products,
-        options: {
-            service: productsService,
-            storage: storageService,
-            validator: ProductsValidator
-        }
-    },
-    {
-        plugin: users,
-        options: {
-            usersService: usersService,
-            producerService: ProducerService,
-            validator: UsersValidator
-        }
-    }
-]
+type PluginType = AuthenticationsOptions | ProductsOptions | UsersOptions
 
-export default plugins
+class PluginManager {
+    private static instance: PluginManager
+    private plugins: Array<Plugin<PluginType>> = []
+
+    private constructor() {}
+
+    public static getInstance(): PluginManager {
+        if (!PluginManager.instance) {
+            PluginManager.instance = new PluginManager()
+        }
+
+        return PluginManager.instance
+    }
+
+    public initializePlugins(): void {
+        const authenticationsService = new AuthenticationsService()
+        const productsService = new ProductsService()
+        const storageService = new StorageService()
+        const usersService = UsersService.getInstance()
+
+        this.plugins = [
+            {
+                plugin: authentications,
+                options: {
+                    usersService, 
+                    authenticationsService,
+                    tokenManager: TokenManager,
+                    validator: AuthenticationsValidator
+                }
+            },
+            {
+                plugin: products,
+                options: {
+                    service: productsService,
+                    storage: storageService,
+                    validator: ProductsValidator
+                }
+            },
+            {
+                plugin: users,
+                options: {
+                    usersService: usersService,
+                    producerService: ProducerService,
+                    validator: UsersValidator
+                }
+            }
+        ]
+    }
+
+    public getPlugins(): Array<Plugin<PluginType>> {
+        return this.plugins
+    }
+}
+
+export default PluginManager

@@ -1,7 +1,7 @@
-import { env } from '@/utils/env'
 import admin from 'firebase-admin'
 import serviceAccount from '@/services/firebase/creds/merce-api-firebase-adminsdk.json'
 import { nanoid } from 'nanoid'
+import { env } from '@/utils/env'
 
 export class StorageService {
     private storage: admin.storage.Storage
@@ -10,7 +10,7 @@ export class StorageService {
     constructor() {
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-            storageBucket: env.get('FIREBASE_STORAGE_PATH').toString()
+            storageBucket: env.get('FIREBASE_STORAGE').toString()
         })
 
         this.storage = admin.storage()
