@@ -26,3 +26,7 @@ export type PostUserPayload = z.infer<typeof PostUserPayloadSchema>
 export interface PostProduct extends PostProductPayload {
     imgUrl: string
 }
+
+export interface PutProduct extends PostProductPayload {
+    imgUrl?: string
+}

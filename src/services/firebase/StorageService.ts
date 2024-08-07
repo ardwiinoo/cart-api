@@ -31,10 +31,19 @@ export class StorageService {
         return file.publicUrl()
     }
 
-    async deleteFile(filePath: string) {
+    async deleteFile(fileUrl: string) {
+        const filePath = this.extractFilePathFromUrl(fileUrl)
         const bucket = this.storage.bucket(this.bucketName)
         const file = bucket.file(filePath)
-
+        
         await file.delete()
+    }
+
+    private extractFilePathFromUrl(url: string): string {
+        const match = url.match(/https:\/\/firebasestorage.googleapis.com\/v0\/b\/[^/]+\/o\/([^?]+)/)
+        if (!match || !match[1]) {
+            throw new Error('Invalid firebase public url')
+        }
+        return decodeURIComponent(match[1])
     }
 }

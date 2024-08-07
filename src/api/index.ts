@@ -8,6 +8,7 @@ import { ProducerService } from '@/services/rabbitmq/ProducerService'
 import { StorageService } from '@/services/firebase/StorageService'
 import { products, ProductsOptions } from './products'
 import { ProductsValidator } from '@/validator/products'
+import CacheService from '@/services/redis/CacheService'
 
 interface Plugin<TOptions> {
     plugin: any
@@ -32,8 +33,9 @@ class PluginManager {
 
     public initializePlugins(): void {
         const authenticationsService = new AuthenticationsService()
-        const productsService = new ProductsService()
         const storageService = new StorageService()
+        const cacheService = new CacheService()
+        const productsService = new ProductsService(storageService, cacheService)
         const usersService = UsersService.getInstance()
 
         this.plugins = [
