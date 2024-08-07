@@ -39,6 +39,43 @@ class ProductsHandler {
         }
     }
 
+    async putProductHandler(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.verifyUserRole(req.user)
+            this.validator.validatePostProductSchema(req.body)
+
+            const id = req.getParam('id').toString()
+            const imgUrl = req.file ? await this.storage.uploadFile(req.file.buffer, '/images', req.file.originalname, req.file.mimetype) : undefined
+
+            await this.service.updateProduct(id, { ...req.body, imgUrl })
+
+            res.status(200).json({
+                status: 'success',
+                message: 'Product updated'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async getProductsHandler(req: Request, res: Response, next: NextFunction) {
+        try {
+            const page = req.getQuery('page').toNumber(0)
+            const limit = req.getQuery('limit').toNumber(0)
+            
+            const result = (page > 0 && limit > 0) ? await this.service.getProductsWithPaging(page, limit) : await this.service.getProducts()
+
+            if (result.cached) res.setHeader('X-Data-Source', 'cache')
+
+            res.status(200).json({
+                status: 'success',
+                data: result.data
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
     private verifyUserRole(user?: User) {
         if (!user || user.role_id !== Roles.ADMIN) {
             throw new AuthorizationError('Unauthorized')
