@@ -2,7 +2,7 @@ import { AuthorizationError, InvariantError } from "@/exceptions";
 import { StorageService } from "@/services/firebase/StorageService";
 import { ProductsService } from "@/services/postgres";
 import { Roles, User } from "@/utils/types";
-import { ProductsValidator } from "@/validator/products";
+import { ProductsValidator } from "@/validator";
 import autoBind from "auto-bind";
 import { NextFunction, Request, Response } from "express";
 
