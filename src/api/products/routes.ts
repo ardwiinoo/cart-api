@@ -7,10 +7,10 @@ const routes = (handler: ProductsHandler) => {
     const v1 = Router()
 
     v1.get('/products', auth, handler.getProductsHandler)
-    // v1.get('/products/:id', handler)
+    v1.get('/products/:id', handler.getProductByIdHandler)
     v1.post('/products', auth, uploadImage, handler.postProductHandler)
     v1.put('/products/:id', auth, uploadImage, handler.putProductHandler)
-    // v1.delete('/products/:id', handler)
+    v1.delete('/products/:id', auth, handler.deleteProductHandler)
 
     return v1
 }

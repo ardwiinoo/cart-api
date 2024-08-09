@@ -4,6 +4,7 @@ import redis, { RedisClientType } from 'redis'
 class CacheService {
 
     private client: RedisClientType
+    private cacheKeys: Set<string>
 
     constructor() {
         this.client = redis.createClient({
@@ -11,6 +12,8 @@ class CacheService {
                 host: env.get('REDIS_SERVER').toString()
             }
         })
+
+        this.cacheKeys = new Set()
 
         this.client.on('error', (error) => {
             console.error(error)
@@ -23,16 +26,27 @@ class CacheService {
         await this.client.set(key, JSON.stringify(value), {
             EX: expirationInSecond
         })
+
+        this.cacheKeys.add(key)
     }
 
     async get(key: string) {
         const result = await this.client.get(key)
-        if (result === null) throw new Error('Cache tidak ditemukan')
+        if (result === null) throw new Error('Cache not found')
         return result
     }
 
-    delete(key: string) {
+    async delete(key: string) {
         this.client.del(key)
+        this.cacheKeys.delete(key)
+    }
+
+    async deleteAllByKeyPattern(keyPattern: string) {
+        for (const key of this.cacheKeys) {
+            if (key.startsWith(keyPattern)) { // key => products:page:*
+                await this.delete(key)
+            }
+        } 
     }
 }
 
