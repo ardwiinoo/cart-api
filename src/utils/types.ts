@@ -1,4 +1,5 @@
 import { DeleteAuthPayloadSchema, PostAuthPayloadSchema, PutAuthPayloadSchema } from "@/validator/authentications/schema"
+import { PostCartPayloadSchema } from "@/validator/carts/schema"
 import { PostProductPayloadSchema } from "@/validator/products/schema"
 import { PostUserPayloadSchema } from "@/validator/users/schema"
 import { z } from "zod"
@@ -22,6 +23,7 @@ export type PutAuthPayload = z.infer<typeof PutAuthPayloadSchema>
 export type DeleteAuthPayload = z.infer<typeof DeleteAuthPayloadSchema>
 export type PostProductPayload = z.infer<typeof PostProductPayloadSchema>
 export type PostUserPayload = z.infer<typeof PostUserPayloadSchema>
+export type PostCartPayload = z.infer<typeof PostCartPayloadSchema>
 
 export interface PostProduct extends PostProductPayload {
     imgUrl: string
