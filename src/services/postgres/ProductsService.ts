@@ -31,14 +31,19 @@ export class ProductsService {
             throw new InvariantError('Failed to add product')
         }
 
+        await Promise.all([
+            this.cache.delete('products:all'),
+            this.cache.deleteAllByKeyPattern('products:page:*')
+        ])
+
         return rows[0].id
     }
 
     async updateProduct(id: string, payload: PutProduct) {
-        const product = await this.getProductById(id)
+        const { data } = await this.getProductById(id)
 
-        if (payload.imgUrl && product.img_url) {
-            await this.storage.deleteFile(product.img_url)
+        if (payload.imgUrl && data.img_url) {
+            await this.storage.deleteFile(data.img_url)
         }
 
         const query = {
@@ -51,21 +56,66 @@ export class ProductsService {
         if (!rowCount) {
             throw new InvariantError('Failed to update product')
         }
+
+        await Promise.all([
+            this.cache.delete(`products:${id}`),
+            this.cache.delete('products:all'),
+            this.cache.deleteAllByKeyPattern('products:page:*')
+        ])
     }
 
     async getProductById(id: string) {
+        const cacheKey = `products:${id}`
+
+        return this.cache.get(cacheKey).then(cachedData => {
+            return {
+                data: JSON.parse(cachedData),
+                cached: true
+            }
+        }).catch(async () => {
+            const query = {
+                text: 'SELECT * FROM products WHERE id = $1',
+                values: [id]
+            }
+
+            const { rows, rowCount } = await this.pool.query(query)
+
+            if (!rowCount) {
+                throw new NotFoundError('Product not found')
+            }
+
+            await this.cache.set(cacheKey, rows[0])
+
+            return {
+                data: rows[0],
+                cached: false
+            }
+        })
+    }
+
+    async deleteProduct(id: string) {
+        const { data } = await this.getProductById(id)
+
+        if (data.img_url) {
+            await this.storage.deleteFile(data.img_url)
+        }
+
         const query = {
-            text: 'SELECT * FROM products WHERE id = $1',
+            text: 'DELETE FROM products WHERE id = $1',
             values: [id]
         }
 
-        const { rows, rowCount } = await this.pool.query(query)
+        const { rowCount } = await this.pool.query(query)
 
         if (!rowCount) {
-            throw new NotFoundError('Product not found')
+            throw new InvariantError('Failed to delete product')
         }
 
-        return rows[0]
+        await Promise.all([
+            this.cache.delete(`products:${id}`),
+            this.cache.delete('products:all'),
+            this.cache.deleteAllByKeyPattern('products:page:*')
+        ])
     }
 
     async getProducts() {
@@ -83,6 +133,7 @@ export class ProductsService {
             }
 
             const { rows } = await this.pool.query(query)
+            await this.cache.set(cacheKey, rows)
 
             return {
                 data: rows,
