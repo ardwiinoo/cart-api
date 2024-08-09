@@ -19,6 +19,8 @@ class UsersHandler {
             this.validator.validatePostUserPayload(req.body)
             const userId = await this.usersService.addUser(req.body)
 
+            //  await this.producerService.sendMessage()
+
             res.status(201).json({
                 status: 'success',
                 data: { userId }
