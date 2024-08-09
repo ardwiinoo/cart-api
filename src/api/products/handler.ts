@@ -58,6 +58,24 @@ class ProductsHandler {
         }
     }
 
+    async getProductByIdHandler(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.verifyUserRole(req.user)
+            const id = req.getParam('id').toString()
+
+            const result = await this.service.getProductById(id)
+
+            if (result.cached) res.setHeader('X-Data-Source', 'cache')
+            
+            res.status(200).json({
+                status: 'success',
+                data: result.data
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
     async getProductsHandler(req: Request, res: Response, next: NextFunction) {
         try {
             const page = req.getQuery('page').toNumber(0)
@@ -70,6 +88,22 @@ class ProductsHandler {
             res.status(200).json({
                 status: 'success',
                 data: result.data
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async deleteProductHandler(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.verifyUserRole(req.user)
+            const id = req.getParam('id').toString()
+
+            await this.service.deleteProduct(id)
+
+            res.status(200).json({
+                status: 'success',
+                message: 'Product deleted'
             })
         } catch (err) {
             next(err)
