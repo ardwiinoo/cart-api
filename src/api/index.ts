@@ -9,6 +9,7 @@ import { StorageService } from '@/services/firebase/StorageService'
 import { products, ProductsOptions } from './products'
 import { ProductsValidator } from '@/validator/products'
 import CacheService from '@/services/redis/CacheService'
+import EventService from '@/services/event/EventService'
 
 interface Plugin<TOptions> {
     plugin: any
@@ -32,10 +33,12 @@ class PluginManager {
     }
 
     public initializePlugins(): void {
+        const eventService = new EventService()
         const authenticationsService = new AuthenticationsService()
         const storageService = new StorageService()
         const cacheService = new CacheService()
-        const productsService = new ProductsService(storageService, cacheService)
+        const productsService = new ProductsService(storageService, cacheService, eventService)
+        // const cartsService = new CartsService(eventService)
         const usersService = UsersService.getInstance()
 
         this.plugins = [
