@@ -1,20 +1,25 @@
 import { InvariantError, NotFoundError } from '@/exceptions'
-import { PostProduct, PutProduct } from '@/utils/types'
+import { AddItemToCart, PostProduct, PutProduct } from '@/utils/types'
 import { nanoid } from 'nanoid'
 import { Pool } from 'pg'
 import { StorageService } from '../firebase/StorageService'
 import CacheService from '../redis/CacheService'
+import EventService from '../event/EventService'
 
 export class ProductsService {
 
     private pool: Pool
     private storage: StorageService
     private cache: CacheService
+    private event: EventService
 
-    constructor(storageService: StorageService, cacheService: CacheService) {
+    constructor(storageService: StorageService, cacheService: CacheService, eventService: EventService) {
         this.pool = new Pool()
         this.storage = storageService
         this.cache = cacheService
+        this.event = eventService
+
+        this.observeCartEvents()
     }
 
     async addProduct(payload: PostProduct) {
@@ -165,5 +170,28 @@ export class ProductsService {
                 cached: false
             }
         })
+    }
+
+    private observeCartEvents() {
+        this.event.on<AddItemToCart>('cartItemAdded', this.addProductToCart.bind(this))
+    }
+
+    private async addProductToCart(payload: AddItemToCart) {
+        const { data: product } = await this.getProductById(payload.productId)
+        const id = `cart_item-${nanoid(16)}`
+        const totalPrice = product.price * payload.quantity
+
+        const query = {
+            text: 'INSERT INTO cart_items (id, cart_id, product_id, quantity, price) VALUES ($1, $2, $3, $4, $5)',
+            values: [id, payload.cartId, payload.productId, payload.quantity, totalPrice]
+        }
+
+        const { rowCount } = await this.pool.query(query)
+
+        if (!rowCount) {
+            throw new InvariantError('Failed to add product item to cart')
+        }
+
+        await this.cache.delete(`cart_items:${payload.cartId}`)
     }
 }
