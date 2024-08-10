@@ -25,9 +25,14 @@ class CartsHandler {
 
     async postCartHandler(req: Request, res: Response, next: NextFunction) {
         try {
+            this.validator.validatePostCartSchema(req.body)
+            const cartId = await this.service.addItemToCart({ ...req.body, userId: req.user?.id })
 
             res.status(200).json({
-                status: 'success'
+                status: 'success',
+                data: {
+                    cartId
+                }
             })
         } catch (err) {
             next(err)
