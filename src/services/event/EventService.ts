@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import EventEmitter from 'events'
 
 class EventService {
@@ -9,12 +8,12 @@ class EventService {
         this.eventEmitter = new EventEmitter()
     }
 
-    public on(event: string, listener: (...args: any[]) => void) {
+    public on<T>(event: string, listener: (data: T) => void) {
         this.eventEmitter.on(event, listener)
     }
 
-    public emit(event: string, listener: (...args: any[]) => void) {
-        this.eventEmitter.emit(event, listener)
+    public emit<T>(event: string, data: T) {
+        this.eventEmitter.emit(event, data)
     }
 }
 
