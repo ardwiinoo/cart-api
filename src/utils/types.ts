@@ -32,3 +32,11 @@ export interface PostProduct extends PostProductPayload {
 export interface PutProduct extends PostProductPayload {
     imgUrl?: string
 }
+
+export interface PostCartItem extends PostCartPayload {
+    userId: string
+}
+
+export interface AddItemToCart extends PostCartItem {
+    cartId: string
+}
