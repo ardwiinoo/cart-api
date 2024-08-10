@@ -40,3 +40,8 @@ export interface PostCartItem extends PostCartPayload {
 export interface AddItemToCart extends PostCartItem {
     cartId: string
 }
+
+export type DeleteCartItem = {
+    userId: string
+    itemId: string
+}
