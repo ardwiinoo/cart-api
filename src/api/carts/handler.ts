@@ -14,9 +14,11 @@ class CartsHandler {
 
     async getCartsHandler(req: Request, res: Response, next: NextFunction) {
         try {
+            const result = await this.service.getCarts(req.user!.id)
 
             res.status(200).json({
-                status: 'success'
+                status: 'success',
+                data: result
             })
         } catch (err) {
             next(err)
@@ -39,22 +41,16 @@ class CartsHandler {
         }
     }
 
-    async putCartHandler(req: Request, res: Response, next: NextFunction) {
-        try {
-
-            res.status(200).json({
-                status: 'success'
-            })
-        } catch (err) {
-            next(err)
-        }
-    }
-
     async deleteCartHandler(req: Request, res: Response, next: NextFunction) {
         try {
+            const itemId = req.getParam('itemId').toString()
+            const userId = req.user!.id
+
+            await this.service.deleteCartItem({ userId, itemId })
 
             res.status(200).json({
-                status: 'success'
+                status: 'success',
+                message: 'Cart item deleted'
             })
         } catch (err) {
             next(err)
@@ -63,9 +59,11 @@ class CartsHandler {
 
     async deleteCartsHandler(req: Request, res: Response, next: NextFunction) {
         try {
+            await this.service.deleteCarts(req.user!.id)
 
             res.status(200).json({
-                status: 'success'
+                status: 'success',
+                message: 'Cart deleted'
             })
         } catch (err) {
             next(err)
