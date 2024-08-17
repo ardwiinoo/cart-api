@@ -7,8 +7,9 @@ const routes = (handler: CartsHandler) => {
     
     v1.get('/carts', auth, handler.getCartsHandler)
     v1.post('/carts', auth, handler.postCartHandler)
-    v1.delete('/carts/items/:itemId', auth, handler.deleteCartHandler)
+    v1.delete('/carts/:id/items/:itemId', auth, handler.deleteCartHandler)
     v1.delete('/carts', auth, handler.deleteCartsHandler)
+    v1.post('/carts/:id/checkouts', auth, handler.postCheckoutHandler)
 
     return v1
 }

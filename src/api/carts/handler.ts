@@ -69,6 +69,22 @@ class CartsHandler {
             next(err)
         }
     }
+
+    async postCheckoutHandler(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user!.id
+            const orderId = await this.service.checkout(userId)
+
+            res.status(200).json({
+                status: 'success',
+                data: {
+                    orderId
+                }
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 export default CartsHandler
