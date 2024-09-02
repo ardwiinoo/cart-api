@@ -1,12 +1,16 @@
-import { DeleteAuthPayloadSchema, PostAuthPayloadSchema, PutAuthPayloadSchema } from "@/validator/authentications/schema"
-import { PostCartPayloadSchema } from "@/validator/carts/schema"
-import { PostProductPayloadSchema } from "@/validator/products/schema"
-import { PostUserPayloadSchema } from "@/validator/users/schema"
-import { z } from "zod"
+import {
+    DeleteAuthPayloadSchema,
+    PostAuthPayloadSchema,
+    PutAuthPayloadSchema,
+} from '@/validator/authentications/schema'
+import { PostCartPayloadSchema } from '@/validator/carts/schema'
+import { PostProductPayloadSchema } from '@/validator/products/schema'
+import { PostUserPayloadSchema } from '@/validator/users/schema'
+import { z } from 'zod'
 
 export enum Roles {
     ADMIN = 1,
-    CUSTOMER = 2
+    CUSTOMER = 2,
 }
 
 export interface User {
@@ -16,7 +20,7 @@ export interface User {
     phone: string
     role_id: number
     is_verified: boolean
-} 
+}
 
 export type PostAuthPayload = z.infer<typeof PostAuthPayloadSchema>
 export type PutAuthPayload = z.infer<typeof PutAuthPayloadSchema>
@@ -48,13 +52,13 @@ export type DeleteCartItem = {
 
 export enum OrderStatus {
     PLACEMENT = 'placement',
-    FINISH = 'finish'
+    FINISH = 'finish',
 }
 
 export enum PaymentStatus {
     PENDING = 'pending',
     SUCCESS = 'success',
-    FAILED = 'failed'
+    FAILED = 'failed',
 }
 
 export type CartItem = {
@@ -65,4 +69,13 @@ export type CartItem = {
     price: number
     created_at: string
     updated_at: string
+}
+
+export type XenditInvoiceRequest = {
+    amount: number
+    invoiceDuration: string
+    externalId: string
+    description: string
+    currency: string
+    reminderTime: number
 }
