@@ -11,7 +11,30 @@ export class PaymentService {
         })
     }
 
-    async processPayment() {
-        
+    async createPaymentIntent(amount: number, currency: string, orderId: string) {
+        return await this.stripe.paymentIntents.create({
+            amount,
+            currency,
+            metadata: { orderId },
+            payment_method_types: ['card'],
+        })
+    }
+
+    async confirmPayment(paymentIntentId: string, paymentMethodId: string) {
+        try {
+            const paymentIntent = await this.stripe.paymentIntents.confirm(paymentIntentId, {
+                payment_method: paymentMethodId,
+            })
+
+            return {
+                success: true,
+                paymentIntent,
+            }
+        } catch (error) {
+            return {
+                success: false,
+                error: (error as Error).message,
+            }
+        }
     }
 }
